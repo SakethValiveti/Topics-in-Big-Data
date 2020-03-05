@@ -1,0 +1,217 @@
+---
+title: "MeetUp Final Presentation"
+author: "Saketh Valiveti, Venkata Ramana Bokka, Priyanka Nikumbh, Bo Wang"
+date: "12/8/2019"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Meetup
+
+- Allows members to find and join groups related to their personal interests 
+
+- Is used to organize offline and in-person meetings in our area
+
+- A member needs to be able to identify groups and activities which interest them the most to be able to use this platform to network effectively.
+
+
+## Recap
+
+- Our goal is to build a recommender system which will identify and suggest groups and activities to a member based on their interest
+
+- A social network analysis will be done to identify the relationship between groups and people
+
+## Summarizing Peer Comments
+
+- What find of parameters will you be considering for Quantitative and Qualitative Analysis?
+
+We would consider Group, Categories, Members and Topics for the Qualitative
+and Quantitative Analysis. Information from these topics helps in our Analysis.
+We will consider User and Process Metrics. We will look into the efficiency by which the User is successfully able to register to the required group . We will consider the Error-rate for the process. Will look into the error difference that we had before and after the analysis.
+
+- Is the use case defined for new users only or for existing users as well?
+
+The use case is defined for new users only.
+
+## Peer discussion contd.
+
+- Getting good reliable data will be important for this project.
+
+Yes, we got the data from the reliable sources. The total size of the data is around 1.5 GB which is distributed across 9 files.
+
+- Is providing a recommendation not an existing feature in the Meetup application?
+
+It is not an existing feature, it’s a problem that is being faced by the Customer’s we are recommending a solution to solve the problem.
+
+- Since you have planned on building a recommendation system, you may make use of the apriori algorithm which works on the principle of association rules.
+
+Yes , we are implementing Apriori model
+
+## Peer discussion contd.
+
+- How are you planning to perform the social network analysis? Will you be using any graph techniques?
+
+Since the use case is related to Meetup and will not involve other social media app. We did not have any need to implement graph techniques
+
+- How will you recommend new users any groups who don't mention any significant information? Are you planning to implement a matrix learning recommendation?
+
+Yes , we are suggesting Apriori matrix recommendation.
+
+## Peer discussion contd.
+
+- Can you throw some light on the different visualization diagrams you are planning to implement and how will it benefit your analysis?
+
+We use Scatterplot , Bar Diagram , Maps , Frequency  Histogram , Network diagram , Trigram relationship diagrams
+
+
+- Any specific reason for using NLP? Looks like trying Neural Networks with multiple input types like click history, etc or capturing interactions between features would also help. Any specific thoughts on this?
+
+The main idea is to provide an easy navigation for the user. Based on the Group names that are being created, we can identify preferences of the customers using NLP.
+
+
+## Data Summary and Data Exploration
+
+### Data Visualization
+<img src="visualization 1.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## Data Visualization contd.
+<img src="visualization 2.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## Data Visualization contd.
+<img src="visualization 3.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## Data Visualization contd.
+<img src="visualization 4.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## Data Visualization contd.
+<img src="visualization 5.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## Data Visualization contd.
+<img src="visualization 6.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## NLP
+### High Frequency Word By Category
+<img src="nlp10.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## NLP
+### Word Frequency Histogram
+<img src="nlp1.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## NLP contd.
+### Connection between high frequency word
+<img src="nlp2.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## NLP contd.
+### Bri-gram relationships of high frequency words
+<img src="nlp3.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## NLP contd.
+### Tri-gram relationships of high frequency words
+<img src="nlp4.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## NLP contd.
+### Wordcloud of first word in trigram- relationship
+<img src="nlp5.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## NLP contd.
+### Wordcloud of second word in trigram- relationship
+<img src="nlp6.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## NLP contd.
+### Wordcloud of third word in trigram- relationship
+<img src="nlp7.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## NLP contd.
+### Word Frequency by Category
+<img src="nlp8.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## NLP contd.
+### Connection between high frequency words with correlation
+<img src="nlp9.jpg" align="middle" height="450" width="750" margin="0 auto" />
+
+## Machine Learning Models
+<img src="ml1.jpg" align="left" height="200" width="400" margin="0 auto" />
+<img src="ml2.jpg" align="left" height="200" width="300" margin="0 auto" />
+<img src="ml3.jpg" align="right" height="200" width="400" margin="0 auto" />
+<img src="ml4.jpg" align="right" height="200" width="300" margin="0 auto" />
+
+## Deeplearning
+
+- 2 hidden layers, 200 neurons each, 1 epoch
+- Accuracy = 87%
+- Confusion Matrix: Row labels: Actual class; Column labels: Predicted class
+          approval closed open  Error          Rate
+ approval       54      0  245 0.8194 =   245 / 299
+ closed          0      0    6 1.0000 =       6 / 6
+ open            9      0 1525 0.0059 =   9 / 1,534
+ Totals         63      0 1776 0.1414 = 260 / 1,839
+ 
+## Random Forest
+
+- ntrees = 1000
+- max_depth = 4
+- R^2: 0.7939296
+- Confusion Matrix: Row labels: Actual class; Column labels: Predicted class
+          approval closed open  Error            Rate
+ approval      101      0 1266 0.9261 = 1,266 / 1,367
+ closed          0      0   26 1.0000 =       26 / 26
+ open            0      0 7209 0.0000 =     0 / 7,209
+ Totals        101      0 8501 0.1502 = 1,292 / 8,602
+ 
+## Gradient Boosting Machines
+
+- ntrees = 20
+- learn_rate = 0.2
+- max_depth = 10
+- Confusion Matrix: Row labels: Actual class; Column labels: Predicted class
+          approval closed open  Error          Rate
+ approval      123      0  176 0.5886 =   176 / 299
+ closed          1      0    5 1.0000 =       6 / 6
+ open           31      0 1503 0.0202 =  31 / 1,534
+ Totals        155      0 1684 0.1158 = 213 / 1,839
+
+## Apriori model
+
+<img src="ml5.jpg" align="left" height="200" width="800" margin="0 auto" />
+<img src="apriori3.jpg" align="middle" height="100" width="800" margin="0 auto" />
+<img src="apriori4.jpg" align="middle" height="100" width="300" margin="0 auto" />
+
+## Item frequency support = 0.1
+
+<img src="apriori1.jpg" align="middle" height="450" width="700" margin="0 auto" />
+
+## Item frequency topN = 20
+
+<img src="apriori2.jpg" align="middle" height="450" width="700" margin="0 auto" />
+
+## Model Training
+
+<img src="apriori5.jpg" align="middle" height="450" width="700" margin="0 auto" />
+
+## Model Training contd.
+
+<img src="apriori6.jpg" align="middle" height="450" width="800" margin="0 auto" />
+
+## Performance evaluation
+
+<img src="apriori7.jpg" align="middle" height="350" width="800" margin="0 auto" />
+
+## Key Take-aways
+
+- GBM model fits the best for our analysis
+- We can increase the accuracy prediction by increasing the number of parametrs, but it takes more time to run
+- We need to deal with more number of assiciation rules
+
+
+
+
+
+
+
+
+
+
+

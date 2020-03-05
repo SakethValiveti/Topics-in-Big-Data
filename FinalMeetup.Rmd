@@ -1,0 +1,808 @@
+---
+title: "CIS8392 Course Project: Meetup"
+author: "Bo Wang , Priyanka , Venkat , Saketh"
+date: "11/29/2019"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Team Members
+
+There are four team members in our team: Venkata Ramana Bokka, Bo Wang, Saketh Valiveti, Priyanka Nikumbh.
+
+## Business Context
+
+Meetup is a service used to organize online groups that host in-person events for people with similar interests.
+Organizers set up groups, organize events, and develop event content. They also pay a fee to run the group, under the expectation of sharing the cost with members that attend events. Meetup has policies against organizing meetups around a commercial interest,  speech, or groups that do not meet in-person.
+
+
+## Problem Description
+
+There are many different groups in Meetup. Both new users and Meetup members find it difficlut to join the groups they are interest in. They need to navigate through mutiple filters to join the groups they are interest in. 
+
+
+## Data Summary
+
+The data we use for this project is Meetup data. We use Meetup data from Kaggle because the API of Meetup doesn’t work.
+The Meetup Dataset we use provides information about the Meetup Groups , Members , Cities and the Events. The Data is divided across 9 files. Categories related files provide information about the various Categories. It has details about the Category name and the brief informaiton. Groups.csv, Group_Topics.csv and Topics.csv files provide information about the various Groups and the Topics related groups. The remaining files gives more information about the Events , Venues , Members and Cities.
+
+The url of the Meetup data is: https://www.kaggle.com/sirpunch/meetups-data-from-meetupcom
+
+## Data Preparation  -  Groups
+
+The main datasets we use are groups.csv, members.csv and categories.csv 
+Below is data of Meetup groups. We just show the first 10 lines for a sample.
+
+```{r Data1, echo=TRUE, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(kableExtra)
+library(ggplot2)
+library(dplyr)
+library(ggthemes)
+library(maps)
+
+df <- read.csv(file="groups.csv")
+
+df_new <- head(df, 10)
+df_new %>%
+kable("html") %>%
+  kable_styling()
+
+```
+
+## Members
+
+Below is data of Meetup members. We just show the first 10 lines for a sample.
+
+```{r Data2, echo=TRUE, message=FALSE, warning=FALSE}
+
+df_members <- read.csv(file="members.csv")
+
+df_members_new <- head(df_members, 10)
+df_members_new %>%
+kable("html") %>%
+  kable_styling()
+
+```
+
+##  Categories
+
+Below is data of Meetup group categories. We just show the first 10 lines for a sample.
+
+```{r Data3, echo=TRUE, message=FALSE, warning=FALSE}
+
+
+df_categories <- read.csv(file="categories.csv")
+
+df_categories <- head(df, 10)
+df_categories %>%
+kable("html") %>%
+  kable_styling()
+
+```
+
+The data of groups.csv contains some useless information for data analytics. We need to filter the data first. 
+Below is a sample for the filtered data.
+
+```{r Data4, echo=TRUE, message=FALSE, warning=FALSE}
+
+df1<- select(df, c(group_id, category.shortname, 
+                    city, created, description, urlname, 
+                    group_name, rating, visibility))
+df1_new <- head(df1, 10)
+df1_new %>%
+kable("html") %>%
+  kable_styling()
+
+```
+
+## Visualization 1 and Explanation
+
+```{r v1, echo=TRUE, message=FALSE, warning=FALSE}
+
+p1 <- df1 %>%
+  ggplot( aes(x = category.shortname)) +
+  geom_bar(fill = "lightblue", colour = "black")+
+  coord_flip() +
+  xlab("") +
+  theme_bw()+
+  labs(title="Count of Groups By Category",
+       y="Count",
+       x="Category") +
+  theme_gdocs()
+
+plot(p1)
+
+```
+
+From this Bar Chart, we could see the count of Meetup groups by categories. We could find the amount of Meetup groups in tech category is the largest and the second is career business Meetup group. This diagram could help us yo give recommendation to new users about the interest of Meetup groups selection.
+
+## Visualization 2 and Explanation
+
+```{r v2, echo=TRUE, message=FALSE, warning=FALSE}
+
+p2 <- df1 %>%
+      ggplot( aes(x = city, fill = city)) +
+      geom_bar()+
+      coord_flip() +
+      xlab("") +
+      theme_bw()+
+      labs(title="Count of Groups By City",
+       y="Count",
+       x="City") +
+      theme_gdocs() +
+      scale_color_gdocs()
+plot(p2)
+
+```
+
+From this Bar Chart, we could see the count of Meetup groups in different cities. We could know that most of the Meetup groups in the datasets are in San Francisco, New York and Chicago.
+
+## Visualization 3 and Explanation
+
+```{r v3, echo=TRUE, message=FALSE, warning=FALSE}
+
+p3 <- df1 %>%
+  ggplot( aes(x = rating)) +
+  geom_bar(fill = "blue", colour = "blue")+
+  xlab("") +
+  theme_bw()+
+  labs(title="Count of Groups By Rating",
+       y="Count",
+       x="Rating")
+
+plot(p3)
+
+```
+
+From this Bar Chart, we could see the situation of the rating of the Meetup groups. We could find there are a lot of groups has a rating as 0. The seconde largest amount of groups has a rating as 5. We find that most of Meetup groups have high rating except 0 rating.
+
+## Visualization 4 and Explanation
+
+```{r v4, echo=TRUE, message=FALSE, warning=FALSE}
+
+p4 <- df1 %>%
+      ggplot( aes(x = visibility, fill = visibility)) +
+      geom_bar()+
+      xlab("") +
+      theme_bw()+
+      labs(title="Count of Groups By Visibility",
+       y="Count",
+       x="Visibility") +
+      theme_gdocs() +
+      scale_color_gdocs()
+plot(p4)
+
+```
+
+From this Bar Chart, we could see the situation of the visibility of the Meetup groups.We could find most groups have public visibility and a small percentage of Meetup groups have public limited visibility.
+
+## Visualization 5 and Explanation
+
+```{r v5, echo=TRUE, message=FALSE, warning=FALSE}
+
+p5 <- df_members %>%
+      ggplot( aes(x = city, fill = city)) +
+      geom_bar()+
+      coord_flip() +
+      xlab("") +
+      theme_bw()+
+      labs(title="Count of Members By City",
+       y="Count",
+       x="City") +
+      theme_gdocs() +
+      scale_color_gdocs()
+plot(p5)
+
+```
+
+From this Bar Chart, we could see the count of Meetup group members in different cities. We could know that most of the Meetup group members in the datasets are in San Francisco, New York and Chicago. It supports our finding of Meetup groups.
+
+## Visualization 6 and Explanation
+
+```{r v6, echo=TRUE, message=FALSE, warning=FALSE}
+
+map(database="state")
+df_venues <- read.csv(file="venues.csv")
+symbols(df_venues$lon, df_venues$lat,bg = 'red', fg = 'red', squares =rep(1, length(df_venues$lon)), inches=0.03, add=TRUE)
+
+```
+
+The map gives details about the density of the venues across the state.
+
+## Tokenize Data
+
+We tokenize the words in groups' description and find the frequency of the words. We show the top 6 words with frequence from high to low.
+
+```{r Tokenize1, echo=TRUE, message=FALSE, warning=FALSE}
+
+library(janeaustenr)
+library(tidytext)
+
+class(df1$description)
+df1$description <- as.character(df1$description)
+
+#number of observations by categories
+category.shortname <- df1 %>%
+  count(category.shortname) %>%
+  unique()
+
+#number of category.shortname
+n_category.shortname <- count(category.shortname)
+
+tokens <- df1 %>%
+  unnest_tokens(output = word, input = description)
+
+token_count <- tokens %>%
+  count(word,
+        sort = TRUE)
+
+tokens_cleaned <- tokens %>% 
+  anti_join(get_stopwords())
+
+#find numbers
+numbers <- tokens_cleaned %>% 
+  filter(str_detect(word, "^[0-9]")) %>% 
+  select(word) %>% unique()
+
+#remove numbers
+tokens_cleaned <- tokens_cleaned %>% 
+  anti_join(numbers, by = "word")
+
+rare <- tokens_cleaned %>% 
+  count(word) %>% 
+  filter(n<10) %>% 
+  select(word) %>% 
+  unique()
+
+tokens_cleaned <- tokens_cleaned %>% 
+  anti_join(rare, by = "word")
+
+letters <- tokens_cleaned %>% 
+  filter(str_length(word) < 3) %>% 
+  select(word) %>% 
+  unique()  
+
+tokens_cleaned <- tokens_cleaned %>% 
+  anti_join(letters, by = "word")
+
+word_count <- tokens_cleaned %>%
+  count(word,
+        sort = TRUE)
+
+word_by_category <- tokens_cleaned %>%
+  count(category.shortname, word, sort= TRUE) %>%
+  ungroup()
+
+kable(head(word_count), caption = "word count") %>%
+  kable_styling(full_width=FALSE, position= "left")
+
+```
+
+We also show the words with highest frequency by categories. We show the top 6 words with frequence from high to low and the categories they belong to.
+
+```{r Tokenize2, echo=TRUE, message=FALSE, warning=FALSE}
+
+kable(head(word_by_category), caption = "Word By Category") %>%
+  kable_styling()
+
+```
+
+Below is Word Frequency Histogram for the description of all Meetup groups.
+
+```{r Tokenize3, echo=TRUE, message=FALSE, warning=FALSE}
+
+tokens_cleaned %>%
+  count(word, sort = T) %>%
+  rename(word_freq = n) %>%
+  ggplot(aes(x=word_freq)) +
+  geom_histogram(aes(y=..count..), 
+                 color="black", 
+                 fill="red", 
+                 alpha=0.3) + 
+  scale_x_continuous(breaks=c(0:5,10,100,500,10e3), 
+                     trans="log1p", 
+                     expand=c(0,0)) + 
+  scale_y_continuous(breaks=c(0,100,1000,5e3,10e3,5e4,10e4,4e4), 
+                     expand=c(0,0)) + 
+  theme_bw() +
+  labs(title = "Word Frequency Histogram")
+
+```
+
+## Natural Language Processing (NLP)：Relationships Between Words
+
+For the Natural Language Processing (NLP) part, we analyzed word frequencies to compare frequencies across different Meetup groups' categories to discover which words occur most often in discussions and identify the Meetup groups' categories and trends.
+
+We analysis the description of each Meetup groups and identify the words with high frequency as well as the relationship between thsoe words. Below is the network of words with high frequency to show their relationship between each others.
+
+```{r NLP1, echo=TRUE, message=FALSE, warning=FALSE}
+
+library(ggraph)
+library(igraph)
+library(textdata)
+library(tidytext)
+
+uncommon_word <- tokens_cleaned %>% 
+  count(word) %>%
+  filter(n< 50) %>%
+  select(word) %>% 
+  unique()
+
+word_correlation = tokens_cleaned %>% 
+  anti_join(uncommon_word, by = "word") %>% 
+  widyr::pairwise_cor(word, urlname) %>% 
+  filter(!is.na(correlation),
+         correlation > .50)
+
+# Visualizing the correlations                                             
+plot_word_cor <- word_correlation %>%
+  graph_from_data_frame() %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = correlation), show.legend = FALSE) + 
+  geom_node_point(color = "lightgreen", size = 4) + 
+  geom_node_text(aes(label = name), repel = TRUE) +
+  theme_void()  
+
+plot_word_cor
+
+```
+
+```{r NLP2, echo=TRUE, message=FALSE, warning=FALSE}
+
+text_cleaned <- df1 %>% 
+  mutate(description = str_replace_all(description, "^[a-z]{0,2}$", " ")) %>%
+  select(category.shortname, description)
+
+bigrams <- text_cleaned %>% 
+  unnest_tokens(bigram, description,
+                token = "ngrams", n = 2) 
+    
+# bigram counts:
+bigrams %>%
+  count(bigram, sort = TRUE)
+
+bigrams_sep <- bigrams %>%
+  separate(bigram, c("word1", "word2"), sep = " ")
+
+bigrams_fil <- bigrams_sep %>% 
+  filter(!word1 %in% stop_words$word & 
+           str_length(word1)>1 &
+           word1 != "removed") %>% 
+  filter(!word2 %in% stop_words$word &
+           str_length(word2)>1 &
+           word2 != "removed")
+
+bigrams_new <-bigrams_fil %>%
+  count(word1, word2, sort = TRUE)
+
+# new bigram counts - first 5 rows:
+kable(head(bigrams_new), caption = "Bi-gram") %>%
+  kable_styling(full_width=FALSE, position= "left")
+
+```
+
+We analysised the relationship between the words. For Bigram- relationship, we noted some strong relationships between words such as "social" and "media"... It doesn't show very useful information for users and groups' categories, however, it could help us to understand the data.
+
+```{r NLP3, echo=TRUE, message=FALSE, warning=FALSE}
+
+#Tokenizing by tri-gram
+trigrams <- df1 %>% 
+  mutate(description = str_replace_na(description)) %>%
+  mutate(description = str_replace_all(description,  "[0-9]|NA", " "))  %>%
+  unnest_tokens(trigram, description,
+                token = "ngrams", n = 3) 
+
+# filtering n-grams
+trigrams_sep <- trigrams %>%
+  separate(trigram, c("word1", "word2", "word3"), sep = " ")
+
+trigrams_fil <- trigrams_sep %>% 
+  filter(!word1 %in% stop_words$word & is.na(word1) == FALSE) %>% 
+  filter(!word2 %in% stop_words$word & is.na(word2) == FALSE) %>% 
+  filter(!word3 %in% stop_words$word & is.na(word3) == FALSE)
+  
+
+trigram_new <- trigrams_fil %>%
+  count(word1, word2, word3, sort = TRUE)
+
+# new trigram counts:
+kable(head(trigram_new), caption = "Tri-gram") %>%
+  kable_styling()
+
+```
+
+For Trigram- relationship, we noted some strong relationships between words such as "real", "estate" and "investors"; "youtube" and watch; "certified", "inbound" and "marketing"... We could find most of the words and their relationships are about tecnology and business. It could support our findings "the amount of Meetup groups in tech category is the largest and the second is career business Meetup group".
+
+## WordCloud of the words with high frequency
+
+Below is the wordcloud of first word in trigram- relationship.
+
+```{r NLP4, echo=TRUE, message=FALSE, warning=FALSE}
+
+library(wordcloud)
+library(RColorBrewer)
+
+# define a nice color palette
+pal <- brewer.pal(8,"Dark2")
+
+# plot the 150 most common words
+trigrams_fil %>%
+  count(word3) %>%
+  with(wordcloud(word3, n, scale=c(4,.1), min.freq = 50, max.words = 200,
+                 random.order = FALSE, rot.per=.15, colors=pal))
+
+```
+
+Below is the wordcloud of second word in trigram- relationship.
+
+```{r NLP5, echo=TRUE, message=FALSE, warning=FALSE}
+
+trigrams_fil %>%
+  count(word2) %>%
+  with(wordcloud(word2, n, scale=c(4,.1), min.freq=50, max.words=200,
+                random.order=FALSE, rot.per=.15,
+                colors=pal))
+
+```
+
+Below is the wordcloud of third word in trigram- relationship.
+
+```{r NLP6, echo=TRUE, message=FALSE, warning=FALSE}
+
+trigrams_fil %>%
+  count(word1) %>%
+  with(wordcloud(word1, n, scale=c(4,.1), min.freq=50, max.words = 200,
+                 random.order = FALSE, rot.per=.15, colors=pal))
+
+```
+
+From the wordclouds, we could find a lot of words with high frequency are about technology and business. They support our findings. We also find some words about cities. They support our findings "most of the Meetup groups in the datasets are in San Francisco, New York and Chicago".
+
+## Word Frequency
+
+We conducted further research on word frequency with using tf-idf to evaluate it. Below are the results we hot.
+
+```{r Word Frequency1, echo=TRUE, message=FALSE, warning=FALSE}
+
+library(tm)
+
+word_counts <- tokens_cleaned %>% 
+  group_by(category.shortname) %>%
+  count(word, sort = TRUE)
+
+review_dtm <- word_counts %>% 
+  cast_dtm(category.shortname, word, n)
+
+review_dtm
+
+```
+
+```{r Word Frequency2, echo=TRUE, message=FALSE, warning=FALSE}
+
+#tf-idf
+tfidf <- word_counts %>% 
+  bind_tf_idf(word, category.shortname, n) 
+
+tfidf_top = tfidf %>%
+  group_by(category.shortname) %>%
+  arrange(desc(tf_idf)) 
+
+kable(head(tfidf_top), caption = "Word Frequency by Category") %>%
+  kable_styling(font_size = 9)
+
+```
+
+We found some words with high frequency by catgories such as "dogs" and "pets-animals"; "motorcycle" and "cars-motorcycle"; "moms" and "parents-family"... It doesn't show very useful information for users and groups' categories, however, it could help us to understand the data.
+
+```{r Word Frequency3, echo=TRUE, message=FALSE, warning=FALSE}
+
+tf_idf <- word_by_category %>%
+  bind_tf_idf(word, category.shortname, n) %>%
+  arrange(desc(tf_idf))
+
+tf_idf %>%
+  filter(str_detect(category.shortname, "^vap|^Vap|^ele|^sci|^teen|^ecig|^Inn")) %>%
+  group_by(category.shortname) %>%
+  top_n(12, tf_idf) %>%
+  ungroup() %>%
+  mutate(word = reorder(word, tf-idf)) %>%
+  ggplot((aes(word, tf_idf, fill = category.shortname))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap( ~ category.shortname, scale = "free") +
+  ylab("tf-idf") +
+  coord_flip() +
+  labs(title = "Word Frequency By Category")
+
+```
+
+```{r Word Frequency4, echo=TRUE, message=FALSE, warning=FALSE}
+
+library(widyr)
+library(gapminder)
+
+category_cors <- word_by_category %>%
+  pairwise_cor(category.shortname, word, n, sort = TRUE)
+
+head(category_cors)
+
+```
+
+```{r Word Frequency5, echo=TRUE, message=FALSE, warning=FALSE}
+
+set.seed(1231)
+
+category_cors %>%
+  filter(correlation > .80) %>%
+  graph_from_data_frame() %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(alpha = correlation, width = correlation)) +
+  geom_node_point(size = 6, color = "orange") +
+  geom_node_text(aes(label = name), repel = TRUE) +
+  theme_void()
+
+```
+
+## Topic Modeling
+
+```{r Topic, echo=TRUE, message=FALSE, warning=FALSE}
+
+library(topicmodels)
+
+lda5 <- LDA(review_dtm, k = 5, control = list(seed = 1234)) 
+
+topics <- terms(lda5, 100)
+kable(head(topics)) %>%
+  kable_styling()
+
+```
+
+The results from the topic models are consistent with the other analyses completed. Most of the words with high frequency and strong relationship are about technology and business.
+
+## NLP Results and Discussion
+
+For the Natural Language Processing (NLP) part, we analyzed word frequencies to compare frequencies across different Meetup groups' categories to discover which words occur most often in discussions and identify the Meetup groups' categories and trends. The results supports our finding of popular groups. When we give recommendations for new users to select groups they want to join, technology and career-business groups will be good choice for them because they are the most popular groups. 
+
+
+
+
+
+## Machine Learning Models
+
+For this project we want to implement the high performance machine learning models taught in class. We made use of the Deep Learning model, Random Forrest model and GBM model.
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+#install.packages("h2o")
+library(h2o)
+library(tidyverse)
+h2o.init(nthreads = -1)
+
+```
+
+Importing dataset to train the models. The name of the first column was loading in an un-supported format so we had to manually change it. Then we converted the imported dataframe into h2o format using as.h2o command.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+train<- read.csv("groups_train.csv")
+colnames(train)[1] <- "group_id"
+h2o.train <- as.h2o(train)
+```
+
+### Partition the data into training(70%), validation(15%) and test sets(15%)
+
+For the purposes of training, validating and testing the data, we are going to split the dataset into 3 subsets of 70%, 15% and 15% respectively and assign each of the splits to a variable.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+splits <- h2o.splitFrame(data = h2o.train,
+                         ratios = c(0.7, 0.15), # 70/15/15 split
+                         seed = 1234)
+train_h2o <- splits[[1]]
+valid_h2o <- splits[[2]]
+test_h2o <- splits[[3]]
+```
+
+Now we have to define x and y for the model.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+y <- "join_mode" # column name for outcome
+x <- setdiff(names(train_h2o), y) 
+```
+
+## Deep Learning
+
+For the deep learning model we had to reduce the number of epochs and use default number of layers to prevent bogging down the system and get the result in a reasonable amount of time.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+m1 <- h2o.deeplearning(
+  model_id = "dl_model_first",
+  x = x,
+  y = y,
+  training_frame = train_h2o,
+  validation_frame = valid_h2o, ## validation dataset: used for scoring and
+  ## early stopping
+  #activation="Rectifier", ## default
+  #hidden=c(200,200), ## default: 2 hidden layers, 200 neurons each
+  epochs = 1 ## one pass over the training data
+)
+summary(m1)
+```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+prediction_h2odl <- h2o.predict(m1,test_h2o)
+```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+prediction_h2odl
+
+```
+
+We can see that the training R squared values are arond 0.76 and the validation R squared values are around 0.75. An important observation is that the error percentages are quite low in both the training and validation epochs; approximately 15% and 16% respectively.
+
+## Random Forest
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+rforest.model <- h2o.randomForest(
+  y=y, 
+  x=x, 
+  training_frame = train_h2o, 
+  ntrees = 1000, 
+  mtries = 3, 
+  max_depth = 4, 
+  seed = 1122)
+```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+h2o.performance(rforest.model)
+```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+prediction_h2orf <- h2o.predict(rforest.model, test_h2o)
+```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+prediction_h2orf
+```
+
+MSE: 0.1104002
+RMSE: 0.3322653
+Logloss: 0.369555
+Mean Per-Class Error: 0.6420385
+R^2: 0.7939296
+Total Error = 0.1502
+
+## Gradient Boosting Machine(GBM-Grid)
+
+Number of trees = 14
+MSE: 0.02272684
+RMSE: 0.1507542
+Logloss: 0.1129969
+Mean Per-Class Error: 0.04857099
+R^2: 0.9575786
+Total Error: 0.0233
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+gbm <- h2o.gbm(
+  model_id="dl_model_tuned", 
+  x = x,
+  y = y,
+  training_frame = train_h2o, 
+  validation_frame = valid_h2o,
+  ntrees = 20,                ## decrease the trees, mostly to allow for run time
+  learn_rate = 0.2,           ## increase the learning rate (from 0.1)
+  max_depth = 10,             ## increase the depth (from 5)
+  stopping_rounds = 2,        ## 
+  stopping_tolerance = 0.01,  ##
+  score_each_iteration = T,   ##
+  seed = 2000000
+)
+summary(gbm)
+
+```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+prediction_h2ogbm <- h2o.predict(gbm, test_h2o)
+```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+prediction_h2ogbm
+```
+
+
+## Getting best model
+
+To find out what model suits the data best, the easiest way would be to use h2o's AutoML. From the result we can see that GBM models seem to perform the best.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+automl_models_h2o <- h2o.automl(  
+  x = x,  
+  y = y,  
+  training_frame    = train_h2o,  
+  validation_frame  = valid_h2o,  
+  leaderboard_frame = test_h2o,  
+  max_runtime_secs  = 300
+        )
+```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+automl_leaderboard <- automl_models_h2o@leaderboard
+automl_leaderboard 
+
+```
+
+### Performance Matrix
+
+Total Error = 0.1217
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+automl_leader <- automl_models_h2o@leader
+performance_h2o <- h2o.performance(automl_leader, newdata = test_h2o)
+performance_h2o %>%  h2o.confusionMatrix()
+```
+
+
+## Apriori
+
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(include = TRUE, echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+Apriori is an algorithm for frequent item set mining and association rule learning over relational databases. It proceeds by identifying the frequent individual items in the database and extending them to larger and larger item sets as long as those item sets appear
+
+Association Rules (Group  Analysis: Identifying Frequently-Joined Groups) load the group data into a sparse matrix
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+
+r = getOption("repos")
+r["CRAN"] = "http://cran.us.r-project.org"
+options(repos = r)
+install.packages("arules")
+library(arules)
+
+```
+
+
+
+### Preparing the data for Apriori model
+Loading required package: Matrix  Attaching package: 'arules' The following objects are masked from 'package:base': %in%, write
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+groups_data <- read.transactions("groups.csv", sep = "," , quote = "")
+groups <- head(groups_data , 1000)
+
+inspect(groups[1:5])
+itemFrequency(groups[, 1:3])
+itemFrequencyPlot(groups, support = 0.1)
+itemFrequencyPlot(groups, topN = 20)
+
+```
+
+
+### Training a model on the data default settings result in zero rules learned
+set better support and confidence levels to learn more rules
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+apriori(groups)
+grouprules <- apriori(groups, parameter = list(support = 0.006, confidence = 0.25, 
+    minlen = 2))
+grouprules
+```
+
+### Evaluating model performance - summary of groups association rules
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+#summary(grouprules)
+inspect(grouprules[1:3])
+```
+
+## Summary
+
+The best model for the machine learning analysis is the GBM model. The model can be fine-tuned even more to get better results but might take quite a longer time to run.
+
+The Apriori model is a high performance  association based model which is a really good algorithm to find relations between variables. A notable point about this algorithm is that we have to import the data as transactions.
+
+
+
+
+
